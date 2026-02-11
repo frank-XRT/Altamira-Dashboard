@@ -1,6 +1,6 @@
 :root {
-  --primary-color: #2da44e; /* Professional GitHub-like Green */
-  --secondary-color: #0969da; /* Professional Blue */
+  --primary-color: #E41022; /* Professional GitHub-like Green */
+  --secondary-color: #383637; /* Professional Blue */
   --accent-color: #4cd480; /* Lighter accents */
   --bg-color: #f6f8fa; /* Clean light gray */
   --text-color: #24292f; /* Dark gray for text */
@@ -116,7 +116,7 @@ select {
 }
 
 .btn-primary:hover {
-  background-color: #2926e6;
+  background-color: var(--primary-color);
 }
 
 /* Dashboard */
@@ -127,11 +127,7 @@ select {
 
 .sidebar {
   width: var(--sidebar-width);
-  background: linear-gradient(
-    180deg,
-    var(--secondary-color) 0%,
-    #003e80 100%
-  ); /* Premium Gradient */
+  background-color: var(--secondary-color); /* Premium Gradient */
   color: white;
   display: flex;
   flex-direction: column;
@@ -180,7 +176,7 @@ select {
 .sidebar-nav a.active {
   color: #ffffff;
   background-color: rgba(255, 255, 255, 0.1);
-  border-left: 4px solid var(--accent-color);
+  border-left: 4px solid var(--primary-color);
 }
 
 .main-content {
@@ -584,7 +580,7 @@ select {
 }
 
 .btn-secondary:hover {
-  background-color: #70c0f5;
+  background-color: var(--primary-color);
   border-color: #eef0f5;
 }
 
@@ -792,7 +788,7 @@ select {
 .sidebar-footer a {
   display: block;
   padding: 1rem;
-  color: #000000;
+  color: #ffffff;
   /* Light red/pinkish */
   text-decoration: none;
   transition: 0.3s;
@@ -857,8 +853,8 @@ select {
 
 .payment-card.active {
   background: white;
-  color: #2563eb;
-  border-color: #2563eb;
+  color: var(--primary-color);
+  border-color: var(--primary-color);
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
   border-width: 2px;
 }

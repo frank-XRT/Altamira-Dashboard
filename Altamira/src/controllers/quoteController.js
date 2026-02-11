@@ -6,7 +6,7 @@ const path = require('path');
 // --- ASSETS PRELOADING ---
 // Optimization: Preload logo into memory to avoid FS calls on every PDF generation
 // PDFKit supports: JPEG, PNG. It DOES NOT support WebP.
-const logoPath = path.join(__dirname, '../../public/img/Logo_LosAltosDelSol.png'); 
+const logoPath = path.join(__dirname, '../../public/img/LOGO_ALTAMIRA.png'); 
 let logoBufferAltamira = null;
 
 try {
@@ -164,7 +164,7 @@ exports.getQuotePdf = async (req, res) => {
         if (logoBufferAltamira) {
              try {
                 // Buffer is already loaded
-                doc.image(logoBufferAltamira, 60, 10, { fit: [150, 120], align: 'left' });
+                doc.image(logoBufferAltamira, 60, 10, { fit: [130, 100], align: 'left' });
              } catch(err) {
                  console.error("PDF Generation: Error drawing logo from buffer", err);
                  // Fallback text
