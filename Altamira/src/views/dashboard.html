@@ -1,0 +1,1195 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Casa Emprendimientos - Dashboard</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/style.css?v=3" />
+    <link rel="stylesheet" href="/css/responsive.css" />
+    <link rel="stylesheet" href="/css/success-modal.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link
+      rel="icon"
+      type="image/webp"
+      href="/img/Logo_CasaEmprendimientos.webp"
+    />
+  </head>
+
+  <body style="display: none">
+    <!-- Mobile Header -->
+    <header class="mobile-header">
+      <button id="mobile-menu-btn" class="btn-icon">
+        <i class="fas fa-bars"></i>
+      </button>
+      <h2>Casa Emprendimientos</h2>
+    </header>
+
+    <!-- Dashboard Container -->
+    <div id="dashboard-container" class="dashboard-container">
+      <!-- Sidebar Overlay (for mobile) -->
+      <div id="sidebar-overlay" class="sidebar-overlay hidden"></div>
+
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <h3>Casa Emprendimientos</h3>
+          <div id="user-info">
+            <p>Bienvenido,</p>
+            <span id="user-name">Usuario</span>
+          </div>
+        </div>
+        <nav class="sidebar-nav">
+          <ul>
+            <li>
+              <a href="#" data-view="projects" class="active"
+                ><i class="fas fa-building"></i> Proyectos</a
+              >
+            </li>
+            <li>
+              <a href="#" data-view="quotes"
+                ><i class="fas fa-file-invoice-dollar"></i> Cotizaciones</a
+              >
+            </li>
+            <li>
+              <a href="#" data-view="commissions"
+                ><i class="fas fa-money-bill-wave"></i> Comisiones</a
+              >
+            </li>
+            <li id="nav-sales" class="hidden">
+              <a href="#" data-view="sales"
+                ><i class="fas fa-handshake"></i> Ventas</a
+              >
+            </li>
+            <li>
+              <a href="#" data-view="clients"
+                ><i class="fas fa-users"></i> Clientes</a
+              >
+            </li>
+            <li id="nav-users" class="hidden">
+              <a href="#" data-view="users"
+                ><i class="fas fa-user-cog"></i> Usuarios</a
+              >
+            </li>
+          </ul>
+        </nav>
+        <div class="sidebar-footer">
+          <a href="#" id="logout-btn"
+            ><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a
+          >
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- ... other sections ... -->
+
+        <!-- Users View -->
+        <section id="view-users" class="view-section hidden">
+          <div class="section-header">
+            <h1>Gestión de Usuarios</h1>
+            <button class="btn-primary" onclick="openUserModal()">
+              + Nuevo Usuario
+            </button>
+          </div>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Email</th>
+                  <th>Teléfono</th>
+                  <th>Rol</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="users-list-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Projects View -->
+        <section id="view-projects" class="view-section">
+          <div class="section-header">
+            <h1 id="main-projects-title" style="margin-bottom: 0.5rem">
+              Proyectos
+            </h1>
+            <!-- Project List / Cards -->
+          </div>
+          <div id="projects-list" class="projects-grid">
+            <!-- Projects injected here -->
+          </div>
+
+          <!-- Single Project Detail (Hidden initially) -->
+          <div id="project-detail" class="hidden">
+            <button id="back-to-projects" class="btn-secondary">
+              <i class="fas fa-arrow-left"></i> Volver a Proyectos
+            </button>
+            <h2 id="project-title" class="hidden" style="margin-bottom: 1rem">
+              Nombre Proyecto
+            </h2>
+
+            <div class="project-layout">
+              <div class="lots-list-container">
+                <div id="lotes-header-container">
+                  <h3>Lotes</h3>
+                  <!-- Nuevo Lote Button will be injected here -->
+
+                  <div id="admin-lot-actions" class="hidden">
+                    <input
+                      type="file"
+                      id="excel-upload-input"
+                      accept=".xlsx, .xls"
+                      style="display: none"
+                    />
+                    <button
+                      id="btn-export-excel-lots"
+                      class="btn-secondary"
+                      style="
+                        background-color: #3b82f6;
+                        border-color: #3b82f6;
+                        margin-right: 5px;
+                      "
+                    >
+                      <i class="fas fa-file-excel"></i>
+                      <span>Exportar Excel</span>
+                    </button>
+                    <button
+                      id="btn-upload-excel"
+                      class="btn-secondary"
+                      style="background-color: #10b981; border-color: #10b981"
+                    >
+                      <i class="fas fa-file-excel"></i> <span>Subir Excel</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Advanced Filters -->
+                <div class="filters">
+                  <div class="filter-group">
+                    <label>Manzana</label>
+                    <select id="filter-mz">
+                      <option value="">Todas</option>
+                    </select>
+                  </div>
+                  <div class="filter-group">
+                    <label>Número</label>
+                    <input type="number" id="filter-num" placeholder="Ej: 10" />
+                  </div>
+                  <div class="filter-group">
+                    <label>Ubicación</label>
+                    <select id="filter-ubicacion">
+                      <option value="">Todas</option>
+                      <option value="calle">Calle</option>
+                      <option value="esquina">Esquina</option>
+                    </select>
+                  </div>
+                  <div class="filter-group">
+                    <label>Área min (m2)</label>
+                    <input
+                      type="number"
+                      id="filter-area"
+                      placeholder="Ej: 90"
+                    />
+                  </div>
+                  <div class="filter-group">
+                    <label>Precio máx (S/)</label>
+                    <input
+                      type="number"
+                      id="filter-price"
+                      placeholder="Ej: 30000"
+                    />
+                  </div>
+                  <div class="filter-group">
+                    <label>Estado</label>
+                    <select id="filter-status">
+                      <option value="">Todos</option>
+                      <option value="DISPONIBLE">Disponible</option>
+                      <option value="RESERVADO">Reservado</option>
+                      <option value="VENDIDO">Vendido</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="table-responsive">
+                  <table class="table" id="lots-table">
+                    <thead>
+                      <tr>
+                        <th class="col-check">
+                          <input type="checkbox" id="check-all-lots" />
+                        </th>
+                        <th class="col-mz">MZ</th>
+                        <th class="col-n">N°</th>
+                        <th class="col-ubic">UBIC.</th>
+                        <th class="col-area">ÁREA</th>
+                        <th class="col-precio">PRECIO</th>
+                        <th class="col-estado">ESTADO</th>
+                        <th class="col-acciones">ACCIONES</th>
+                      </tr>
+                    </thead>
+                    <tbody id="lots-table-body"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div id="layout-gutter" class="layout-gutter"></div>
+
+              <div class="map-container">
+                <h3>Mapa Referencial</h3>
+                <div
+                  id="map-controls"
+                  style="
+                    display: flex;
+                    justify-content: flex-end;
+                    gap: 10px;
+                    margin-bottom: 10px;
+                  "
+                ></div>
+                <div id="interactive-map" class="map-wrapper">
+                  <!-- Image and Dots injected here -->
+                  <p>Seleccione un proyecto para ver el mapa</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Quotes View -->
+        <section id="view-quotes" class="view-section hidden">
+          <div class="section-header">
+            <h1>
+              Cotizaciones
+              <span
+                id="quote-count"
+                style="font-size: 0.6rem; color: #888"
+              ></span>
+            </h1>
+            <!--<button class="btn-primary" onclick="openNewQuoteGeneral()">
+                        Nueva Cotización
+                    </button>-->
+          </div>
+          <div class="table-responsive">
+            <table class="table" id="quotes-table">
+              <thead>
+                <tr>
+                  <th><input type="checkbox" id="check-all-quotes" /></th>
+                  <th>ID</th>
+                  <th>Cliente</th>
+                  <th>Proyecto</th>
+                  <th>Lote</th>
+                  <th>Precio Final</th>
+                  <th>Inicial</th>
+                  <th>Mensualidad</th>
+                  <th>Plazo</th>
+                  <th>Tipo Pago</th>
+                  <th>Fecha</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="quotes-list-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Commissions View -->
+        <section id="view-commissions" class="view-section hidden">
+          <div class="section-header">
+            <h1>Calculadora de Comisiones</h1>
+          </div>
+
+          <div class="hidden" style="margin-bottom: 20px">
+            <label for="commission-project-select" style="font-weight: 500"
+              >Seleccionar Proyecto:</label
+            >
+            <select
+              id="commission-project-select"
+              style="
+                padding: 8px;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+                max-width: 300px;
+                margin-left: 10px;
+              "
+            >
+              <option value="">-- Seleccione un Proyecto --</option>
+            </select>
+          </div>
+
+          <div class="commissions-layout">
+            <!-- Left: Lots List -->
+            <div class="commissions-table-container">
+              <h3>Seleccionar Lotes</h3>
+              <div class="table-responsive">
+                <table class="table" id="commissions-lots-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 40px">
+                        <input type="checkbox" id="check-all-commissions" />
+                      </th>
+                      <th>Mz</th>
+                      <th>Lote</th>
+                      <th>Precio Contado</th>
+                      <th>Precio Financiado</th>
+                      <th>Estado</th>
+                    </tr>
+                  </thead>
+                  <tbody id="commissions-lots-body">
+                    <tr>
+                      <td colspan="6" style="text-align: center">
+                        Seleccione un proyecto para ver los lotes.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Right: Calculator Panel -->
+            <div class="commission-panel-v2">
+              <div class="panel-header">
+                <h2>Calculadora de Comisiones</h2>
+                <p>Proyecta tus ganancias por venta</p>
+              </div>
+
+              <div class="comm-tabs">
+                <button
+                  class="comm-tab active"
+                  id="tab-financed"
+                  data-type="financiado"
+                >
+                  Financiado
+                </button>
+                <button class="comm-tab" id="tab-cash" data-type="contado">
+                  Contado
+                </button>
+              </div>
+
+              <div id="financed-options">
+                <div class="comm-section-label">MONTO INICIAL</div>
+                <div class="initial-cards">
+                  <!-- Card S/ 3,000 -->
+                  <label class="initial-card active">
+                    <input
+                      type="radio"
+                      name="comm-initial-v2"
+                      value="3000"
+                      checked
+                    />
+                    <div class="card-radio-circle"></div>
+                    <div class="card-content">
+                      <span class="card-title">Inicial S/ 3,000</span>
+                      <span class="card-subtitle">Comisión 2% - 2.35%</span>
+                    </div>
+                  </label>
+                  <!-- Card S/ 6,000 -->
+                  <label class="initial-card">
+                    <input type="radio" name="comm-initial-v2" value="6000" />
+                    <div class="card-radio-circle"></div>
+                    <div class="card-content">
+                      <span class="card-title">Inicial S/ 6,000</span>
+                      <span class="card-subtitle">Comisión 3% - 3.5%</span>
+                    </div>
+                  </label>
+                  <!-- Card S/ 10,000 -->
+                  <label class="initial-card">
+                    <input type="radio" name="comm-initial-v2" value="10000" />
+                    <div class="card-radio-circle"></div>
+                    <div class="card-content">
+                      <span class="card-title">Inicial S/ 10,000</span>
+                      <span class="card-subtitle">Comisión 4% - 4.5%</span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <div class="lot-stepper-container">
+                <div class="stepper-info">
+                  <span class="stepper-title">Número de Lotes</span>
+                  <span class="stepper-subtitle">Cantidad seleccionada</span>
+                </div>
+                <!-- Note: The stepper logic will be linked to the table checkboxes -->
+                <div class="stepper-controls">
+                  <span
+                    id="stepper-value"
+                    style="
+                      font-size: 1.2rem;
+                      font-weight: 700;
+                      margin: 0 10px;
+                      color: #2563eb;
+                    "
+                    >0</span
+                  >
+                </div>
+              </div>
+
+              <div class="comm-result-box">
+                <div class="res-row">
+                  <span>Total Venta</span>
+                  <span id="res-total-venta">S/ 0.00</span>
+                </div>
+                <div class="res-row">
+                  <span>Comisión Aplicada</span>
+                  <span id="res-comision-perc" class="text-green">0%</span>
+                </div>
+                <div class="res-total-container">
+                  <span class="res-total-label">COMISIÓN ESTIMADA</span>
+                  <span class="res-total-value" id="res-total-commission"
+                    >S/ 0.00</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Clients View -->
+        <section id="view-clients" class="view-section hidden">
+          <div class="section-header">
+            <h1>Clientes</h1>
+            <div class="header-actions">
+              <button class="btn-secondary" onclick="exportClientsToExcel()">
+                <i class="fas fa-file-excel"></i> Exportar Excel
+              </button>
+              <button
+                class="btn-primary"
+                onclick="openClientModalShared(null, 'create')"
+              >
+                + Nuevo Cliente
+              </button>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table" id="clients-table">
+              <thead>
+                <tr>
+                  <th><input type="checkbox" id="check-all-clients" /></th>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Apellidos</th>
+                  <th>Documento</th>
+                  <th>Teléfono</th>
+                  <th>Email</th>
+                  <th>Comentario</th>
+                  <th>Asesor Asignado</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="clients-list-body"></tbody>
+            </table>
+          </div>
+        </section>
+        <section id="view-sales" class="view-section hidden">
+          <div class="section-header">
+            <h1>Ventas</h1>
+          </div>
+          <div class="table-responsive">
+            <table class="table" id="sales-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Cliente</th>
+                  <th>Proyecto</th>
+                  <th>Lote</th>
+                  <th>Precio Final</th>
+                  <th>Fecha</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="sales-list-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Bulk Actions Bar (Moved to Main Content for Global Access) -->
+        <div id="bulk-actions-bar" class="bulk-bar hidden">
+          <span id="bulk-selected-count">1 seleccionado</span>
+          <div class="bulk-actions">
+            <button id="btn-bulk-edit" class="btn-secondary">
+              <i class="fas fa-edit"></i> Editar
+            </button>
+            <button
+              id="btn-bulk-delete"
+              class="btn-primary"
+              style="background-color: #ef4444"
+            >
+              <i class="fas fa-trash"></i> Eliminar
+            </button>
+
+            <div id="bulk-assign-container" class="bulk-assign-group hidden">
+              <span class="assign-label">Asignar a:</span>
+              <select id="bulk-advisor-select" class="bulk-select">
+                <option value="">Seleccionar Asesor...</option>
+              </select>
+              <button id="btn-bulk-assign" class="btn-primary btn-assign">
+                <i class="fas fa-user-check"></i> Asignar
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- Quote Modal/Form -->
+      <div id="quote-modal" class="modal hidden">
+        <div class="modal-content quote-modal-content">
+          <span class="close-modal">×</span>
+
+          <div
+            class="modal-header-center"
+            style="text-align: center; margin-bottom: 20px"
+          >
+            <h3>COTIZACION</h3>
+            <div
+              class="project-logo-box"
+              style="
+                margin: 10px auto;
+                width: 200px;
+                height: 100px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 8px;
+                border: 1px solid #444;
+              "
+            >
+              <img
+                src="/img/Logo_LosAltosDelSol.png"
+                alt="Logo los altos del sol"
+                style="max-width: 100%; max-height: 100%"
+              />
+            </div>
+          </div>
+
+          <form id="quote-form">
+            <input type="hidden" id="quote-lote-id" />
+            <input type="hidden" id="q-payment-type" value="" />
+            <!-- Stores selected payment type -->
+            <input type="hidden" id="q-cache-contado" />
+            <input type="hidden" id="q-cache-financiado" />
+            <input type="hidden" id="q-cache-oferta" />
+
+            <!-- Client Name -->
+            <div class="form-group" style="margin-bottom: 20px">
+              <label>Nombre:</label>
+              <input
+                type="text"
+                id="q-client-name"
+                placeholder="Nombre del Cliente"
+                required
+              />
+            </div>
+
+            <!-- Read-only Lot Info -->
+            <div class="lot-info-row">
+              <div class="info-item">
+                <label>Mz.</label>
+                <input type="text" id="q-mz-readonly" readonly />
+              </div>
+              <div class="info-item">
+                <label>Lote</label>
+                <input type="text" id="q-num-readonly" readonly />
+              </div>
+              <div class="info-item">
+                <label>Area</label>
+                <input type="text" id="q-area-readonly" readonly />
+              </div>
+            </div>
+
+            <!-- Payment Types Cards -->
+            <div class="payment-types-container">
+              <div
+                class="payment-card"
+                id="card-contado"
+                onclick="selectPaymentType('contado')"
+              >
+                Contado
+              </div>
+              <div
+                class="payment-card"
+                id="card-financiado"
+                onclick="selectPaymentType('financiado')"
+              >
+                Financiado
+              </div>
+              <div
+                class="payment-card"
+                id="card-oferta"
+                onclick="selectPaymentType('oferta')"
+              >
+                Oferta Financiado
+              </div>
+            </div>
+
+            <!-- Data Grid -->
+            <div class="data-grid">
+              <div class="data-item">
+                <label>Precio de Venta</label>
+                <input type="text" id="q-price" readonly />
+              </div>
+              <div class="data-item" id="container-initial">
+                <label>Inicial</label>
+                <input type="number" id="q-initial" step="0.01" />
+              </div>
+              <div class="data-item">
+                <label>Descuento</label>
+                <input type="number" id="q-discount" value="0" step="0.01" />
+              </div>
+              <div class="data-item">
+                <label>Monto a financiar</label>
+                <input type="text" id="q-amount-financed" readonly />
+              </div>
+            </div>
+
+            <!-- Cuotas (Centered) -->
+            <div class="cuotas-container" id="container-cuotas">
+              <div style="display: inline-block; width: 120px">
+                <label>Cuotas</label>
+                <input
+                  type="number"
+                  id="q-months"
+                  value="12"
+                  min="1"
+                  max="60"
+                />
+              </div>
+            </div>
+
+            <!-- Footer Results -->
+            <div class="results-box">
+              <div class="result-row">
+                <span>Precio de cierre</span>
+                <span id="q-final-closing">S/. 0,00</span>
+              </div>
+              <div class="result-row" id="row-monthly">
+                <span>Cuota mensual</span>
+                <span id="q-monthly">S/. 0,00</span>
+              </div>
+            </div>
+
+            <div style="text-align: center">
+              <button
+                type="submit"
+                id="btn-cotizar"
+                class="btn-primary"
+                disabled
+              >
+                Cotizar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Edit Lot Modal -->
+      <div id="edit-lot-modal" class="modal hidden">
+        <div class="modal-content">
+          <span class="close-modal close-edit-lot">&times;</span>
+          <h2>Editar Lote</h2>
+          <form id="edit-lot-form">
+            <input type="hidden" id="edit-lot-id" />
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Manzana</label>
+                <input type="text" id="edit-lot-mz" required />
+              </div>
+              <div class="form-group">
+                <label>Número</label>
+                <input type="number" id="edit-lot-num" required />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Área (m2)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  id="edit-lot-area"
+                  required
+                  filter="float"
+                />
+              </div>
+              <div class="form-group">
+                <label>Precio Contado (S/)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  id="edit-lot-price-contado"
+                  required
+                />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Ubicación</label>
+              <select id="edit-lot-ubicacion">
+                <option value="calle">Calle</option>
+                <option value="esquina">Esquina</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Precio Financiado (S/)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  id="edit-lot-price-financiado"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label>Precio Oferta (S/)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  id="edit-lot-price-oferta"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Estado</label>
+              <select id="edit-lot-status" required>
+                <option value="1">DISPONIBLE</option>
+                <option value="2">RESERVADO</option>
+                <option value="3">VENDIDO</option>
+              </select>
+            </div>
+            <button type="submit" id="btn-save-lot" class="btn-primary">
+              Guardar Cambios
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Edit Quote Modal -->
+      <div id="edit-quote-modal" class="modal hidden">
+        <div class="modal-content">
+          <span class="close-modal close-edit-quote">&times;</span>
+          <h2>Editar Cotización</h2>
+          <form id="edit-quote-form">
+            <input type="hidden" id="edit-quote-id" />
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Cliente</label>
+                <input
+                  type="text"
+                  id="eq-client"
+                  readonly
+                  style="background-color: #f0f0f0"
+                />
+              </div>
+              <div class="form-group">
+                <label>Fecha</label>
+                <input
+                  type="text"
+                  id="eq-date"
+                  readonly
+                  style="background-color: #f0f0f0"
+                />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Proyecto</label>
+                <input
+                  type="text"
+                  id="eq-project"
+                  readonly
+                  style="background-color: #f0f0f0"
+                />
+              </div>
+              <div class="form-group">
+                <label>Tipo de Pago</label>
+                <input
+                  type="text"
+                  id="eq-payment-type"
+                  readonly
+                  style="background-color: #f0f0f0"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Precio Base</label>
+                <input type="number" step="0.01" id="eq-price" required />
+              </div>
+              <div class="form-group">
+                <label>Descuento</label>
+                <input type="number" step="0.01" id="eq-discount" value="0" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Cuota Inicial</label>
+                <input type="number" step="0.01" id="eq-initial" value="0" />
+              </div>
+              <div class="form-group">
+                <label>Plazo (Meses)</label>
+                <input
+                  type="number"
+                  id="eq-months"
+                  value="12"
+                  min="1"
+                  max="60"
+                />
+              </div>
+            </div>
+
+            <div class="results-preview">
+              <p>Nuevo Precio Final: <span id="eq-final-price">0.00</span></p>
+              <p>Saldo a Financiar: <span id="eq-financed">0.00</span></p>
+              <p>Nueva Cuota Mensual: <span id="eq-monthly">0.00</span></p>
+            </div>
+
+            <button type="submit" id="btn-save-quote" class="btn-primary">
+              Actualizar Cotización
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- View Detail Modal -->
+      <div id="detail-modal" class="modal hidden">
+        <div class="modal-content">
+          <span class="close-modal close-detail">&times;</span>
+          <h2 id="detail-title">Detalles</h2>
+          <div id="detail-content" class="detail-content"></div>
+        </div>
+      </div>
+
+      <!-- Edit Client Modal -->
+      <div id="edit-client-modal" class="modal hidden">
+        <div class="modal-content">
+          <span class="close-modal close-edit-client">&times;</span>
+          <h2>Editar Cliente</h2>
+          <form id="edit-client-form">
+            <input type="hidden" id="edit-client-id" />
+            <div class="form-row">
+              <div class="form-group">
+                <label>Nombre</label>
+                <input type="text" id="edit-client-name" required />
+              </div>
+              <div class="form-group">
+                <label>Apellidos</label>
+                <input type="text" id="edit-client-lastname" required />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>DNI/RUC (Opcional)</label>
+                <input type="text" id="edit-client-doc" />
+              </div>
+              <div class="form-group">
+                <label>Teléfono</label>
+                <input type="text" id="edit-client-phone" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Email (Opcional)</label>
+              <input type="email" id="edit-client-email" />
+            </div>
+            <button type="submit" id="btn-save-client" class="btn-primary">
+              Guardar Cambios
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Create Lot Modal -->
+      <div id="create-lot-modal" class="modal hidden">
+        <div class="modal-content">
+          <span class="close-modal close-create-lot">&times;</span>
+          <h2>Agregar Nuevo Lote</h2>
+          <form id="create-lot-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Manzana</label>
+                <input
+                  type="text"
+                  id="new-lot-mz"
+                  required
+                  placeholder="Ej: A"
+                />
+              </div>
+              <div class="form-group">
+                <label>Número</label>
+                <input
+                  type="number"
+                  id="new-lot-num"
+                  required
+                  placeholder="Ej: 15"
+                />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Área (m2)</label>
+                <input type="number" step="0.01" id="new-lot-area" required />
+              </div>
+              <div class="form-group">
+                <label>Precio Contado (S/)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  id="new-lot-price-contado"
+                  required
+                />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Ubicación</label>
+              <select id="new-lot-ubicacion">
+                <option value="calle">Calle</option>
+                <option value="esquina">Esquina</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Precio Financiado (S/)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  id="new-lot-price-financiado"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label>Precio Oferta (S/)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  id="new-lot-price-oferta"
+                  required
+                />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Estado</label>
+              <select id="new-lot-status" required>
+                <option value="1">DISPONIBLE</option>
+                <option value="2">VENDIDO</option>
+                <option value="3">RESERVADO</option>
+              </select>
+            </div>
+            <!-- Coordinates default to center -->
+            <input type="hidden" id="new-lot-x" value="50" />
+            <input type="hidden" id="new-lot-y" value="50" />
+
+            <button type="submit" class="btn-primary">Crear Lote</button>
+            <p style="margin-top: 10px; font-size: 0.9rem; color: #666">
+              * El punto aparecerá en el centro del mapa. Luego use "Modificar
+              Puntos" para ubicarlo.
+            </p>
+          </form>
+        </div>
+      </div>
+
+      <!-- User Modal -->
+      <div id="user-modal" class="modal hidden">
+        <div class="modal-content">
+          <span class="close-modal close-user-modal">&times;</span>
+          <h2 id="user-modal-title">Nuevo Usuario</h2>
+          <form id="user-form">
+            <input type="hidden" id="user-id" />
+            <div class="form-group">
+              <label>Nombre</label>
+              <input type="text" id="user-name-input" required />
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" id="user-email" required />
+            </div>
+            <div class="form-group">
+              <label>Teléfono</label>
+              <input
+                type="text"
+                id="user-phone"
+                placeholder="Ej: 999 999 999"
+              />
+            </div>
+            <div class="form-group">
+              <label>Contraseña</label>
+              <input
+                type="password"
+                id="user-password"
+                placeholder="Crear contraseña"
+              />
+              <small style="color: var(--text-color); opacity: 0.7"
+                >Dejar en blanco para no cambiar al editar</small
+              >
+            </div>
+            <div class="form-group">
+              <label>Confirmar Contraseña</label>
+              <input
+                type="password"
+                id="user-password-confirm"
+                placeholder="Repetir contraseña"
+              />
+            </div>
+            <div class="form-group">
+              <label>Rol</label>
+              <select id="user-role" required>
+                <option value="1">Administrador</option>
+                <option value="2">Asesor</option>
+              </select>
+            </div>
+            <button type="submit" class="btn-primary">Guardar Usuario</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Success Modal -->
+      <div id="success-modal" class="modal hidden">
+        <div class="modal-content success-modal-content">
+          <div class="success-icon">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <h3 id="success-modal-title">¡Éxito!</h3>
+          <p id="success-modal-message">Operación realizada correctamente.</p>
+          <button id="btn-success-accept" class="btn-primary">Aceptar</button>
+        </div>
+      </div>
+
+      <!-- Confirmation Modal -->
+      <div id="confirm-modal" class="modal hidden">
+        <div class="modal-content success-modal-content">
+          <div class="confirm-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+          <h3 id="confirm-modal-title">¿Estás seguro?</h3>
+          <p id="confirm-modal-message">Esta acción no se puede deshacer.</p>
+          <div class="confirm-actions">
+            <button id="btn-confirm-cancel" class="btn-secondary">
+              Cancelar
+            </button>
+            <button
+              id="btn-confirm-yes"
+              class="btn-primary"
+              style="background-color: #dc3545"
+            >
+              Eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bulk Edit Modal -->
+      <div id="bulk-edit-modal" class="modal hidden">
+        <div class="modal-content" style="max-width: 500px">
+          <span class="close-modal close-bulk-edit">&times;</span>
+          <h2>Edición Masiva</h2>
+          <p id="bulk-edit-subtitle" style="margin-bottom: 20px; color: #666">
+            Editando 0 registros
+          </p>
+
+          <form id="bulk-edit-form">
+            <div class="form-group">
+              <label>Campo a editar</label>
+              <select id="bulk-field-select" required>
+                <option value="">Seleccione campo...</option>
+              </select>
+            </div>
+
+            <div class="form-group" id="bulk-value-container">
+              <label>Nuevo Valor</label>
+              <div id="bulk-input-wrapper">
+                <!-- Input injected dynamically -->
+                <input
+                  type="text"
+                  class="form-control"
+                  disabled
+                  placeholder="Seleccione un campo primero"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              class="btn-primary"
+              style="width: 100%; margin-top: 10px"
+            >
+              Aplicar Cambios
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Call Action Modal -->
+      <div id="call-modal" class="modal hidden">
+        <div class="modal-content" style="max-width: 400px">
+          <span class="close-modal close-call-modal">&times;</span>
+          <h2>Registrar Llamada</h2>
+          <form id="call-form">
+            <input type="hidden" id="call-client-id" />
+            <div class="form-group">
+              <label>Resultado de la llamada</label>
+              <select
+                id="call-result"
+                class="form-control"
+                required
+                onchange="toggleReagendarDate()"
+              >
+                <option value="CONTACTADO">Contactado (Verde)</option>
+                <option value="NO_CONTESTO">No Contestó (Rojo)</option>
+                <option value="REAGENDADO">Reagendar (Amarillo)</option>
+                <option value="PENDIENTE">
+                  Pendiente / Sin Gestión (Gris)
+                </option>
+              </select>
+            </div>
+
+            <div class="form-group hidden" id="reagendar-container">
+              <label>Fecha y Hora para Reagendar</label>
+              <input
+                type="datetime-local"
+                id="call-reagendar-date"
+                class="form-control"
+              />
+            </div>
+
+            <button
+              type="submit"
+              class="btn-primary"
+              style="width: 100%; margin-top: 15px"
+            >
+              Guardar
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Global Loader -->
+      <div
+        id="global-loader"
+        class="modal hidden"
+        style="z-index: 110000; background: rgba(255, 255, 255, 0.8)"
+      >
+        <div style="text-align: center">
+          <div class="loader-spinner"></div>
+          <h3 style="margin-top: 20px; color: var(--primary-color)">
+            Procesando...
+          </h3>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <script src="/js/api.js?v=1"></script>
+
+    <script src="/js/auth.js?v=1"></script>
+    <script src="/js/dashboard.js?v=1"></script>
+    <script src="/js/app.js?v=1"></script>
+  </body>
+</html>
