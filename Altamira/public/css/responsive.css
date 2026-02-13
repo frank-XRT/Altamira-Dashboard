@@ -165,7 +165,7 @@
     .quote-modal-content input,
     .quote-modal-content select {
         padding: 0.6rem !important;
-        font-size: 0.6rem !important;
+        font-size: 1rem !important;
     }
 
     /* Login Box */
@@ -187,11 +187,8 @@
 
     /* Enhance Map Dots on Mobile */
     .lot-dot {
-        width: 2% !important;
-        /* Larger dots relative to map width */
-        border: 1px solid rgba(255, 255, 255, 0.8) !important;
-        /* Thinner border for better fill visibility */
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5) !important;
+        width: 3px !important;
+        border: 0px solid white;
     }
 
     .lot-dot.active {

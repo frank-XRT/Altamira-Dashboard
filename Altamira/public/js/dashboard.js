@@ -50,7 +50,6 @@ if (sidebarOverlay) {
 const filterMz = document.getElementById('filter-mz');
 const filterNum = document.getElementById('filter-num');
 const filterArea = document.getElementById('filter-area');
-const filterPrice = document.getElementById('filter-price');
 const filterStatus = document.getElementById('filter-status');
 
 // State
@@ -154,7 +153,12 @@ async function loadProjectDetail(id) {
     try {
         const project = await api.get(`/projects/${id}`);
         currentProject = project;
-        currentLots = project.Lotes || [];
+        // Sort lots by Manzana and then by Numero
+        currentLots = (project.Lotes || []).sort((a, b) => {
+            const mzDiff = (a.manzana || '').localeCompare(b.manzana || '');
+            if (mzDiff !== 0) return mzDiff;
+            return (a.numero || 0) - (b.numero || 0);
+        });
         selectedLotId = null; // Reset selection
 
         // Show Detail View
@@ -250,7 +254,7 @@ backToProjectsBtn.addEventListener('click', () => {
 // Filters Event Listeners
 const filterUbicacion = document.getElementById('filter-ubicacion');
 
-[filterMz, filterNum, filterArea, filterPrice, filterStatus, filterUbicacion].forEach(input => {
+[filterMz, filterNum, filterArea, filterStatus, filterUbicacion].forEach(input => {
     if (input) input.addEventListener('input', filterLots);
 });
 
@@ -258,7 +262,6 @@ function filterLots() {
     const mz = filterMz.value.toUpperCase();
     const num = parseInt(filterNum.value);
     const area = parseFloat(filterArea.value);
-    const price = parseFloat(filterPrice.value);
     const status = filterStatus.value;
     const ubicacion = document.getElementById('filter-ubicacion').value;
 
@@ -266,7 +269,6 @@ function filterLots() {
         if (mz && l.manzana !== mz) return false;
         if (!isNaN(num) && l.numero !== num) return false;
         if (!isNaN(area) && l.area < area) return false;
-        if (!isNaN(price) && l.precio_contado > price) return false;
         if (status && l.EstadoLote.nombre_estado.toUpperCase() !== status) return false;
         if (ubicacion && (l.ubicacion || 'calle').toLowerCase() !== ubicacion.toLowerCase()) return false;
         return true;
@@ -852,6 +854,7 @@ function renderMap(project, lots) {
         btn.onclick = () => {
             isMapEditMode = !isMapEditMode;
             if (isMapEditMode) {
+                hideTooltip();
                 btn.innerHTML = '<i class="fas fa-check"></i> Terminar Edición';
                 btn.classList.add('btn-primary');
                 btn.classList.remove('btn-secondary');
@@ -883,6 +886,7 @@ function renderMap(project, lots) {
 
             // Tooltip Events
             dot.addEventListener('mouseenter', () => {
+                if (isMapEditMode) return;
                 if (mapTooltipHideTimeout) clearTimeout(mapTooltipHideTimeout);
                 // No wait for showing
                 const rect = dot.getBoundingClientRect();
@@ -2662,7 +2666,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 window.hideLoader();
 
-                let msg = `Proceso completado.\nActualizados: ${result.updated}\nOmitidos: ${result.skipped}`;
+                let msg = `Proceso completado.\nActualizados: ${result.updated}\nCreados: ${result.created}\nOmitidos: ${result.skipped}`;
                 if (result.errorsCount > 0) {
                     msg += `\nErrores: ${result.errorsCount}. Revise la consola para detalles.`;
                     console.warn('Excel Errors:', result.errors);
@@ -2761,10 +2765,11 @@ async function exportLotsToExcel() {
         // Prepare data for SheetJS
         const data = currentLots.map(l => ({
             'Manzana': l.manzana || '',
-            'Lote': l.numero,
-            'Area': l.area || 0,
-            'Contado': l.precio_contado || 0,
-            'Financiado': l.precio_financiado || 0
+            'numero': l.numero || '',
+            'ubicacion': l.ubicacion || 'calle',
+            'area': l.area || 0,
+            'precio': l.precio_contado || 0,
+            'estado': l.EstadoLote ? l.EstadoLote.nombre_estado : (l.estado || '')
         }));
 
         // Create a new workbook and worksheet
@@ -2966,7 +2971,7 @@ function setupMapZoom(container, content) {
         const delta = e.deltaY > 0 ? 0.9 : 1.1;
         
         const newScale = mapZoom.scale * delta;
-        if (newScale < 1 || newScale > 5) return;
+        if (newScale < 1 || newScale > 11) return;
 
         // Calculate new position to keep mouse point stable
         // (offsetX - oldX) / oldScale = (offsetX - newX) / newScale
@@ -3047,7 +3052,7 @@ function setupMapZoom(container, content) {
                 const newScale = mapZoom.scale * delta;
                 
                 // Scale around center of screen (approx)
-                if (newScale >= 1 && newScale <= 5) {
+                if (newScale >= 1 && newScale <= 15) {
                     // Just scale for now, keeping current center? 
                     // To keep it simple: just scale. 
                     // Better: Scale around midpoint of touches.

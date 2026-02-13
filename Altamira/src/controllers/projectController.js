@@ -5,8 +5,8 @@ exports.getAllProjects = async (req, res) => {
         console.log('API: getAllProjects called');
 
         let whereClause = {};
-        // If user is NOT Admin, only show ACTIVO projects
-        const userRole = req.user.role || '';
+        // If user is NOT Admin (or not logged in), only show ACTIVO projects
+        const userRole = req.user ? (req.user.role || '') : '';
         if (userRole.toLowerCase() !== 'administrador') {
             whereClause.estado = 'ACTIVO';
         }
@@ -36,8 +36,8 @@ exports.getProjectById = async (req, res) => {
             return res.status(404).json({ message: 'Project not found' });
         }
 
-        // Check visibility for non-admins
-        const userRole = req.user.role || '';
+        // Check visibility for non-admins (or not logged in)
+        const userRole = req.user ? (req.user.role || '') : '';
         if (userRole.toLowerCase() !== 'administrador' && project.estado !== 'ACTIVO') {
             return res.status(403).json({ message: 'Access denied: Project is not active' });
         }

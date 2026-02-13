@@ -121,8 +121,8 @@ exports.getQuotePdf = async (req, res) => {
 
         // --- THEME CONFIGURATION ---
         const COLORS = {
-            primary: '#268d00',
-            secondary: '#0099ff',
+            primary: '#E41022',
+            secondary: '#383637',
             text: '#333333',
             textLight: '#555555',
             background: '#F8F9FA',
@@ -164,7 +164,7 @@ exports.getQuotePdf = async (req, res) => {
         if (logoBufferAltamira) {
              try {
                 // Buffer is already loaded
-                doc.image(logoBufferAltamira, 60, 10, { fit: [130, 100], align: 'left' });
+                doc.image(logoBufferAltamira, 50, 10, { fit: [130, 100], align: 'left' });
              } catch(err) {
                  console.error("PDF Generation: Error drawing logo from buffer", err);
                  // Fallback text

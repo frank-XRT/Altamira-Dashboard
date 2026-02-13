@@ -3,6 +3,8 @@ const router = express.Router();
 const projectController = require('../controllers/projectController');
 const { verifyToken, verifyRole } = require('../middleware/auth');
 
+router.get('/public', projectController.getAllProjects);
+router.get('/public/:id', projectController.getProjectById);
 router.get('/', verifyToken, projectController.getAllProjects);
 router.get('/:id', verifyToken, projectController.getProjectById);
 router.post('/', [verifyToken, verifyRole(['Administrador'])], projectController.createProject);
