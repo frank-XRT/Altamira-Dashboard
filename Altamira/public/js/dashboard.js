@@ -515,7 +515,7 @@ function renderQuotes(quotes) {
             <td>${q.plazo_meses <= 1 ? 'Contado' : 'Financiado'}</td>
             <td>${(q.fecha_creacion || q.createdAt) ? new Date(q.fecha_creacion || q.createdAt).toLocaleDateString() : '-'}</td>
             <td>
-                <button class="btn-small" onclick="window.open('${API_URL}/quotes/${q.id_cotizaciones}/pdf?token=${localStorage.getItem('token')}', '_blank')" title="Ver PDF">
+                <button class="btn-small" onclick="window.openQuotePDF(${q.id_cotizaciones})" title="Ver PDF Seguro">
                     <i class="fas fa-file-pdf"></i>
                 </button>
                 <button class="btn-small" onclick="viewDetail('quote', ${q.id_cotizaciones})" title="Ver Detalles">
@@ -584,6 +584,28 @@ window.deleteQuote = (id) => {
             alert('Error al eliminar: ' + error.message);
         }
     });
+};
+
+// Secure PDF Opener to prevent IDOR
+window.openQuotePDF = async (id) => {
+    try {
+        window.showLoader();
+        // Request a limited-scope token for this specific quote
+        const res = await api.post(`/quotes/${id}/share`);
+        window.hideLoader();
+
+        if (res && res.token) {
+            // Open PDF with the secure token
+            const url = `${API_URL}/quotes/${id}/pdf?token=${res.token}`;
+            window.open(url, '_blank');
+        } else {
+            alert('Error al generar el enlace seguro.');
+        }
+    } catch (error) {
+        window.hideLoader();
+        console.error(error);
+        alert('Error: ' + error.message);
+    }
 };
 
 window.editQuote = (id) => {
@@ -3306,9 +3328,20 @@ function updateCommissionCalculation() {
     let totalSales = 0;
     let avgPrice = 0;
     
+    let totalCommissionable = 0;
+    
     document.querySelectorAll('.comm-check:checked').forEach(chk => {
         const price = isCash ? parseFloat(chk.dataset.priceCash) : parseFloat(chk.dataset.price);
         totalSales += price;
+
+        if (isCash) {
+            totalCommissionable += price;
+        } else {
+             // Financiado: Subtract Initial from Price
+             let amount = price - initialTier;
+             if (amount < 0) amount = 0;
+             totalCommissionable += amount;
+        }
     });
 
     if (count > 0) avgPrice = totalSales / count;
@@ -3320,10 +3353,19 @@ function updateCommissionCalculation() {
             percentage = 7;
         } else {
             if (initialTier === 3000) {
-                if (count >= 1 && count <= 3) percentage = 2;
-                else if (count >= 4 && count <= 5) percentage = 2.2;
-                else if (count >= 6) percentage = 2.35;
+                // Image: 1-2 lots (2%), 3+ (2.2%), 5+ (2.35%)
+                if (count >= 1 && count <= 2) percentage = 2;
+                else if (count >= 3 && count <= 4) percentage = 2.2;
+                else if (count >= 5) percentage = 2.35;
             } else if (initialTier === 6000) {
+                 // Adjusted slightly to match logic shift if needed, or kept as is if no data. 
+                 // Assuming previous code 1-3 -> 3%, 4-5 -> 3.2, 6 -> 3.5 was based on similar pattern?
+                 // Let's keep existing structure but maybe align breaks if they were intended to be same counts.
+                 // Current: 1-3, 4-5, 6.
+                 // If 3000 is 1-2, 3-4, 5... maybe 6000 should follow?
+                 // Without explicit instruction on 6000, I will mostly trust the code OR align it.
+                 // Given the specific request was about the base amount, I'll stick to the explicit image data for 3000.
+                 // I will leave 6000/10000 alone to minimize side effects unless requested.
                 if (count >= 1 && count <= 3) percentage = 3;
                 else if (count >= 4 && count <= 5) percentage = 3.2;
                 else if (count >= 6) percentage = 3.5;
@@ -3335,12 +3377,37 @@ function updateCommissionCalculation() {
         }
     }
     
-    const commission = totalSales * (percentage / 100);
+    const commission = totalCommissionable * (percentage / 100);
     
-    // Update UI
-    if(stepperValue) stepperValue.textContent = count;
-    if(resLotesPrecio) resLotesPrecio.textContent = `${count} x S/ ${avgPrice.toLocaleString('es-PE', {minimumFractionDigits: 0})}`;
+    // Update UI Breakdown
+    
+    // 1. Count
+    const countEl = document.getElementById('res-lot-count');
+    if(countEl) countEl.textContent = count;
+
+    // 2. Total & Base
     if(resTotalVenta) resTotalVenta.textContent = `S/ ${totalSales.toLocaleString('es-PE', {minimumFractionDigits: 2})}`;
+    
+    // Deductions Logic UI
+    const rowDeduction = document.getElementById('row-deduction-initial');
+    const rowBase = document.getElementById('row-base-comm');
+    const elDeductionVal = document.getElementById('res-total-initial-deduction');
+    const elBaseVal = document.getElementById('res-base-commissionable');
+
+    if (!isCash && count > 0 && totalCommissionable < totalSales) {
+        // Show Breakdown
+        if(rowDeduction) rowDeduction.classList.remove('hidden');
+        if(rowBase) rowBase.classList.remove('hidden');
+
+        const deduction = totalSales - totalCommissionable;
+        if(elDeductionVal) elDeductionVal.textContent = `- S/ ${deduction.toLocaleString('es-PE', {minimumFractionDigits: 2})}`;
+        if(elBaseVal) elBaseVal.textContent = `S/ ${totalCommissionable.toLocaleString('es-PE', {minimumFractionDigits: 2})}`;
+    } else {
+        // Hide Breakdown (Cash or Commissionable = Total)
+        if(rowDeduction) rowDeduction.classList.add('hidden');
+        if(rowBase) rowBase.classList.add('hidden');
+    }
+
     if(resComisionPerc) resComisionPerc.textContent = `${percentage}%`;
     if(resTotalCommission) resTotalCommission.textContent = `S/ ${commission.toLocaleString('es-PE', {minimumFractionDigits: 2})}`;
 }

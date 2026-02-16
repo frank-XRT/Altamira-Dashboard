@@ -2,6 +2,7 @@ const { Cotizacion, Lote, Cliente, Usuario, Proyecto } = require('../models');
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
+const jwt = require('jsonwebtoken');
 
 // --- ASSETS PRELOADING ---
 // Optimization: Preload logo into memory to avoid FS calls on every PDF generation
@@ -391,5 +392,41 @@ exports.updateQuote = async (req, res) => {
         res.json({ message: 'Quote updated successfully', quote });
     } catch (error) {
         res.status(500).json({ message: 'Error updating quote', error: error.message });
+    }
+};
+
+exports.generateShareLink = async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        // 1. Verify existence
+        const quote = await Cotizacion.findByPk(id);
+        if (!quote) return res.status(404).json({ message: 'Quote not found' });
+
+        // 2. Generate Limited Token (Scope: share_pdf, ID specific)
+        const token = jwt.sign(
+            { 
+                quoteId: id, 
+                scope: 'share_pdf' 
+                // No role, no userId -> minimal privilege
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '7d' } // 7 Days
+        );
+
+        // 3. Construct Response
+        // Ideally return full URL if we knew the domain, or just the token/path
+        const relativePath = `/api/quotes/${id}/pdf?token=${token}`;
+        
+        res.json({
+            message: 'Link generated successfully',
+            token: token,
+            link: relativePath,
+            expiresIn: '7d'
+        });
+
+    } catch (error) {
+        console.error('Error generating share link:', error);
+        res.status(500).json({ message: 'Error generating token', error: error.message });
     }
 };
