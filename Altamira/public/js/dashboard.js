@@ -3358,21 +3358,15 @@ function updateCommissionCalculation() {
                 else if (count >= 3 && count <= 4) percentage = 2.2;
                 else if (count >= 5) percentage = 2.35;
             } else if (initialTier === 6000) {
-                 // Adjusted slightly to match logic shift if needed, or kept as is if no data. 
-                 // Assuming previous code 1-3 -> 3%, 4-5 -> 3.2, 6 -> 3.5 was based on similar pattern?
-                 // Let's keep existing structure but maybe align breaks if they were intended to be same counts.
-                 // Current: 1-3, 4-5, 6.
-                 // If 3000 is 1-2, 3-4, 5... maybe 6000 should follow?
-                 // Without explicit instruction on 6000, I will mostly trust the code OR align it.
-                 // Given the specific request was about the base amount, I'll stick to the explicit image data for 3000.
-                 // I will leave 6000/10000 alone to minimize side effects unless requested.
-                if (count >= 1 && count <= 3) percentage = 3;
-                else if (count >= 4 && count <= 5) percentage = 3.2;
-                else if (count >= 6) percentage = 3.5;
+                // Tier S/ 6,000 (3% - 3.5%)
+                if (count >= 1 && count <= 2) percentage = 3;
+                else if (count >= 3 && count <= 4) percentage = 3.2;
+                else if (count >= 5) percentage = 3.5;
             } else if (initialTier === 10000) {
-                if (count >= 1 && count <= 3) percentage = 4;
-                else if (count >= 4 && count <= 5) percentage = 4.2;
-                else if (count >= 6) percentage = 4.5;
+                // Tier S/ 10,000 (4% - 4.5%)
+                if (count >= 1 && count <= 2) percentage = 4;
+                else if (count >= 3 && count <= 4) percentage = 4.2;
+                else if (count >= 5) percentage = 4.5;
             }
         }
     }
