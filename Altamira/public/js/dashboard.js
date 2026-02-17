@@ -1341,9 +1341,14 @@ closeModal.onclick = () => quoteModal.classList.add('hidden');
 
 function calculateQuote() {
     const price = parseFloat(document.getElementById('q-price').value) || 0;
-    const discount = parseFloat(document.getElementById('q-discount').value) || 0;
+
+    const discountInput = document.getElementById('q-discount');
+    let discount = parseFloat(discountInput.value) || 0;
+    if (discount < 0) { discount = 0; discountInput.value = 0; }
+
     const initialInput = document.getElementById('q-initial');
     let initial = parseFloat(initialInput.value) || 0;
+    if (initial < 0) { initial = 0; initialInput.value = 0; }
     const months = parseInt(document.getElementById('q-months').value) || 1;
     const paymentType = document.getElementById('q-payment-type').value;
 
@@ -1430,8 +1435,8 @@ quoteForm.addEventListener('submit', async (e) => {
             id_lote: document.getElementById('quote-lote-id').value,
             id_cliente: clientId,
             precio_base: document.getElementById('q-price').value,
-            descuento: document.getElementById('q-discount').value,
-            inicial: document.getElementById('q-initial').value,
+            descuento: Math.max(0, parseFloat(document.getElementById('q-discount').value) || 0),
+            inicial: Math.max(0, parseFloat(document.getElementById('q-initial').value) || 0),
             plazo_meses: document.getElementById('q-months').value
         };
 
@@ -1534,8 +1539,14 @@ const closeEditQuote = document.querySelector('.close-edit-quote');
 // Calculate edit quote logic
 function calculateEditQuote() {
     const price = parseFloat(document.getElementById('eq-price').value) || 0;
-    const discount = parseFloat(document.getElementById('eq-discount').value) || 0;
-    const initial = parseFloat(document.getElementById('eq-initial').value) || 0;
+    
+    const discountInput = document.getElementById('eq-discount');
+    let discount = parseFloat(discountInput.value) || 0;
+    if (discount < 0) { discount = 0; discountInput.value = 0; }
+
+    const initialInput = document.getElementById('eq-initial');
+    let initial = parseFloat(initialInput.value) || 0;
+    if (initial < 0) { initial = 0; initialInput.value = 0; }
     const months = parseInt(document.getElementById('eq-months').value) || 12;
 
     const finalPrice = Math.max(0, price - discount);
@@ -1790,8 +1801,8 @@ editQuoteForm.addEventListener('submit', async (e) => {
     const id = document.getElementById('edit-quote-id').value;
     const body = {
         precio_base: document.getElementById('eq-price').value,
-        descuento: document.getElementById('eq-discount').value,
-        inicial: document.getElementById('eq-initial').value,
+        descuento: Math.max(0, parseFloat(document.getElementById('eq-discount').value) || 0),
+        inicial: Math.max(0, parseFloat(document.getElementById('eq-initial').value) || 0),
         plazo_meses: document.getElementById('eq-months').value
     };
 
